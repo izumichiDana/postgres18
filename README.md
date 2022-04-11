@@ -1,12 +1,12 @@
-`\c` - like cd and pwd 
+* `\c` - like cd and pwd 
 
-`\l `- shiw all bd
+* `\l `- shiw all bd
 
-`\dt`  - show all tablisy in bd
+* `\dt`  - show all tablisy in bd
 
-`\du` - show all users
+* `\du` - show all users
 
-`\q` - exit
+* `\q` - exit
 
 
 
@@ -16,11 +16,14 @@
     name_of_column1 data_type constraint,
     name_of_column2 data_type constraint,
     ... 
-); - sozdaet tablisu s pilyami
+); -- sozdaet tablisu s pilyami
 ```
 ```sql
 INSERT INTO name_of_table(name_of_column1,name_of_column2)
 VALUES (val1,val2); - add zapisi v tablisu 
 
+```
+```sql
 SELECT* FROM name_of_tabledostayot vse pola i zapisi iz tablisi
 SELECT name_of_column1, name_of_column2 FROM name_of_table; dostaet ukazannye 
+```
