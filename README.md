@@ -62,3 +62,13 @@ SELECT author.first_name, book.title
 FROM author
 JOIN  book ON author.id = book.author_id
 ```
+
+# Import export данных 
+write frome file to db 
+```bash
+psql db_name < file.sql
+```
+write from db to file 
+```bash
+pg_dump db_name > file.sql
+```
