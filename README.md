@@ -1,74 +1,206 @@
-* `\c` - like cd and pwd 
+# Slash commands
+* `\с` - показывает в какой бд мы находимся и через какого юзера
 
-* `\l `- shiw all bd
+* `\с name_of_db` - переключается к этой бд
 
-* `\dt`  - show all tablisy in bd
+* `\l` - показывает все бд
 
-* `\du` - show all users
+* `\dt` - показывает все таблицы в бд
 
-* `\q` - exit
+* `\du` - показывает всех юзеров
+
+* `\q` - выход
 
 
-
-`'CREATE DTABASE name_of_db'`- sozdaet bazzu dannyh 
+# Создание бд и таблиц
 ```sql
-`'CREATE TABLE name_of_table'` - (
+CREATE DATABASE name_of_db; 
+-- создает базу данных
+```
+
+```sql
+CREATE TABLE name_of_table (
     name_of_column1 data_type constraint,
     name_of_column2 data_type constraint,
-    ... 
-); -- sozdaet tablisu s pilyami
+    ...
+); 
+-- создает таблицу с полями
 ```
+# Заполнение таблиц
 ```sql
-INSERT INTO name_of_table(name_of_column1,name_of_column2)
-VALUES (val1,val2); - add zapisi v tablisu 
-
+INSERT INTO name_of_table (name_of_column1, name_of_column2) 
+VALUES (val1, val2);
+-- добавляет запись в таблицу
 ```
+# вывод данных из таблицы
 ```sql
-SELECT* FROM name_of_tabledostayot vse pola i zapisi iz tablisi
-SELECT name_of_column1, name_of_column2 FROM name_of_table; dostaet ukazannye 
+SELECT * FROM name_of_table; 
+-- достает все поля и записи из таблицы
+
+SELECT name_of_column1, name_of_column2 FROM name_of_table; 
+-- достает только указанные столбцы из таблицы
 ```
 
-> primary kye (pk) - pervichnyi kluch 
+# связи
+## pk fk
+> primary key (pk) - первичный ключ
+> это ограничение, которое мы указываем на те поля,которые должны быть уникальными для того, чтобы потом их использовать в связях (например id)
 
-> его мы указываем на те поля, которые должны бфть уникальнфми для того, потоm использовать в связях (например id)
+> foreign key (fk) - внешний ключ
+> это ограничение, которое мы указываем на те поля, которые будут ссылаться на pk в другой таблице, для создания связи
 
-> foreign key (fk) - внещний ключ 
-
->это ограничение , которое мы указываем на те поля , которые ссфлаются на pk в другой таблице , для создания связей 
-
-``` sql
+```sql
 CREATE TABLE author (
-    id serial primary key, 
-    first_name varchar (50),
-    last_name varchar (50)
-)
+    id serial primary key,
+    first_name varchar(50),
+    last_name varchar(50)
+);
 
 CREATE TABLE book (
-    id serial ,
+    id serial,
     title varchar(100),
-    published year 
-    author_id int foreign key references author (id)
+    published year,
+    author_id int foreign key referenses author (id)
+);
+```
+## Виды связей (теория)
+> One to one - (один к одному) 
+Например:
 
-)
+* Один автор - одна биография
+* Один флаг - одна страна
+* Один человек - одно сердце
+
+> One to many - (один ко многим)
+Например:
+
+* Один человек - много клеток, но у одной клетки только один человек
+* Одни родители - много детей, но у одного ребенка только одни родители
+* Один аккаунт - много постов, но у одного поста только один автор (аккаунт)
+* Один makers - много maker'ов, но у одного maker'а только один makers
+
+> Many to many - (многие ко многим)
+Например:
+
+* у человека много друзей и у одного друга много других друзей
+* у доктора много пациентов и у пациента много докторов
+* у пользователя много социальных сетей и у одной соцсети много пользователей
+
+
+## Виды связей (практика)
+### One to one
+```sql
+CREATE TABLE flag (
+    id serial primary key,
+    photo text
+);
+
+CREATE TABLE country (
+    id serial primary key,
+    title varchar(50),
+    gimn text,
+    flag_id int unique,
+
+    constraint fk_country_flag 
+    foreign key (flag_id) references flag(id)
+);
+```
+### One to many
+```sql
+CREATE TABLE account (
+    id serial primary key,
+    nickname varchar(25) unique,
+    u_password varchar(255) 
+);
+
+CREATE TABLE post (
+    id serial primary key,
+    title varchar(100),
+    body text,
+    photo text,
+    account_id int,
+
+    constraint fk_acc_post
+    foreign key (account_id) references account(id) 
+);
 ```
 
-> JOIN - инструкция , которая в запросах  SELECT  брать данные из нескольких таблиц 
+### Many to many
+```sql
+CREATE TABLE doctor (
+    id serial primary key,
+    first_name varchar(25),
+    last_name varchar(50)
+);
 
-> INNER JOIN (JOIN)  - когда достаются  только те записи у которых есть полная связь 
+CREATE TABLE patient (
+    id serial primary key,
+    first_name varchar(25),
+    last_name varchar(50)
+);
 
+CREATE TABLE doctor_patient (
+    doctor_id int,
+    patient_id int,
 
-``` sql
-SELECT author.first_name, book.title
+    constraint fk_doctor
+    foreign key (doctor_id) references doctor(id),
+
+    constraint fk_patient
+    foreign key (patient_id) references patient(id)
+);
+```
+
+## join (теория)
+> JOIN - инструкция, которая позволяет в запросах SELECT брать данные из нескольких таблиц
+
+> INNER JOIN (JOIN) - когда достаются только те записи, у которых есть полная связь
+
+> FULL JOIN - когда достаются абсолютно все записи со всех таблиц
+
+> LEFT JOIN - когда достаются все записи с 'левой' таблицы и так же те записи с полной связью
+
+> RIGHT JOIN - когда достаются все записи с 'правой' таблицы и так же те записи с полной связью
+
+## join (практика)
+
+```sql
+SELECT author.first_name, book.title 
 FROM author
-JOIN  book ON author.id = book.author_id
+JOIN book ON author.id = book.author_id;
 ```
 
-# Import export данных 
-write frome file to db 
+### one to one
+```sql
+SELECT country.title, country.gimn, flag.photo 
+FROM country
+JOIN flag
+ON country.flag_id = flag.id;
+```
+
+### one to many
+```sql
+SELECT account.nickname, post.title, post.photo
+FROM account
+JOIN post
+ON account.id = post.account_id;
+```
+
+### many to many
+```sql
+SELECT doctor.first_name as Doctor, 
+       patient.first_name as Patient
+FROM doctor
+JOIN doctor_patient as dp ON doctor.id = dp.doctor_id
+JOIN patient ON patient.id = dp.patient_id;
+```
+
+# Import export данных
+write from file to db
 ```bash
 psql db_name < file.sql
 ```
-write from db to file 
+write from db to file
 ```bash
 pg_dump db_name > file.sql
 ```
